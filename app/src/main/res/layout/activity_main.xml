@@ -28,20 +28,12 @@
         android:text="Enter entry"
         android:onClick="onAddEntry"/>
 
-    <TableLayout
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@color/button_material_light"
-        android:id="@+id/table">
-        <TableRow>
-            <TextView
-                android:id="@+id/id_column"/>
-            <TextView
-                android:id="@+id/name_column"/>
-            <TextView
-                android:id="@+id/count_column"/>
-        </TableRow>
-    </TableLayout>
+        android:id="@+id/list">
+    </ListView>
 
 </LinearLayout>

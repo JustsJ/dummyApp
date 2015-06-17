@@ -20,6 +20,8 @@ public class DummyDatabase extends SQLiteOpenHelper {
     public static final String NAME="name";
     public static final String COUNT="count";
 
+    public static final String[] PROJECTION={ID, NAME, COUNT};
+
     //is all caps really neccessary? or is it just for readability?
     private static final String CREATE_TABLE="create table "+TABLE+" ("+
             ID+" integer primary key autoincrement, "+
