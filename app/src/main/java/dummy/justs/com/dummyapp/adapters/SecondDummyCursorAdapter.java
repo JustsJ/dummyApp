@@ -1,4 +1,4 @@
-package dummy.justs.com.dummyapp;
+package dummy.justs.com.dummyapp.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,12 +8,18 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import dummy.justs.com.dummyapp.DummyDatabase;
+import dummy.justs.com.dummyapp.R;
+import dummy.justs.com.dummyapp.tables.SecondDummyTable;
+
 /**
  * Created by eptron on 6/17/2015.
  */
-public class DummyCursorAdapter extends CursorAdapter {
+public class SecondDummyCursorAdapter extends CursorAdapter {
 
-    public DummyCursorAdapter(Context context) {
+
+
+    public SecondDummyCursorAdapter(Context context) {
         super(context, null, 0);
     }
 
@@ -27,7 +33,7 @@ public class DummyCursorAdapter extends CursorAdapter {
         TextView name=(TextView) view.findViewById(R.id.item_name);
         TextView count=(TextView) view.findViewById(R.id.item_count);
 
-        name.setText(cursor.getString(cursor.getColumnIndex(DummyDatabase.NAME)));
-        count.setText(cursor.getString(cursor.getColumnIndex(DummyDatabase.COUNT)));
+        name.setText(cursor.getString(cursor.getColumnIndex(SecondDummyTable.NAME)));
+        count.setText(cursor.getString(cursor.getColumnIndex(SecondDummyTable.COUNT)));
     }
 }

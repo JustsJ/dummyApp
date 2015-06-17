@@ -8,8 +8,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 import java.sql.SQLException;
+
+import dummy.justs.com.dummyapp.tables.FirstDummyTable;
+import dummy.justs.com.dummyapp.tables.SecondDummyTable;
 
 /**
  * Created by eptron on 6/17/2015.
@@ -20,28 +24,27 @@ public class DummyContentProvider extends ContentProvider {
     private DummyDatabase mDb;
 
     //AUTHORITY should match the one specified in Manifest
-    private static final String AUTHORITY = "com.justs.dummyapp.DummyContentProvider";
-    private static final String BASE_PATH = "stuff";
+    public static final String AUTHORITY = "com.justs.dummyapp.DummyContentProvider";
 
-    //used to specify URI patterns- all entries (1) or single entry (2)
-    public static final int STUFF = 1;
-    public static final int STUFF_ID = 2;
-
-    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-            + "/" + BASE_PATH);
+    public static final int FIRST_STUFF = 1;
+    public static final int FIRST_STUFF_ID = 2;
+    public static final int SECOND_STUFF = 3;
+    public static final int SECOND_STUFF_ID = 4;
 
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-            + "/some_stuff";
-    public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-            + "/some_stuff";
+            + "/com.justs.stuff";
+    public static final String CONTENT_DIR_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
+            + "/com.justs.stuff";
 
     //used to match given URI with one of the defined patterns
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     //TODO copied from tutorial, how does this syntax even work? Refresh your Java
     static {
-        sURIMatcher.addURI(AUTHORITY, BASE_PATH, STUFF);
-        sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", STUFF_ID);
+        sURIMatcher.addURI(AUTHORITY, FirstDummyTable.BASE_PATH, FIRST_STUFF);
+        sURIMatcher.addURI(AUTHORITY, FirstDummyTable.BASE_PATH + "/#", FIRST_STUFF_ID);
+        sURIMatcher.addURI(AUTHORITY, SecondDummyTable.BASE_PATH, SECOND_STUFF);
+        sURIMatcher.addURI(AUTHORITY, SecondDummyTable.BASE_PATH + "/#", SECOND_STUFF_ID);
     }
 
     @Override
@@ -55,22 +58,30 @@ public class DummyContentProvider extends ContentProvider {
 
         //used to simplify implementation of query method
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        //Specify the used table
-        queryBuilder.setTables(DummyDatabase.TABLE);
+
+
+
 
         //Matches the given uri to pre-defined patterns, and acts according to pattern
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
-            case STUFF:
+            case FIRST_STUFF:
+            case SECOND_STUFF:
                 break;
-            case STUFF_ID:
-                queryBuilder.appendWhere(mDb.ID + "="
+            case FIRST_STUFF_ID:
+                queryBuilder.setTables(FirstDummyTable.TABLE);
+                queryBuilder.appendWhere(FirstDummyTable.ID + "="
+                        + uri.getLastPathSegment());
+                break;
+            case SECOND_STUFF_ID:
+                queryBuilder.setTables(SecondDummyTable.TABLE);
+                queryBuilder.appendWhere(SecondDummyTable.ID + "="
                         + uri.getLastPathSegment());
                 break;
             default:
-                throw new IllegalArgumentException("Wrong URI");
+                throw new IllegalArgumentException("Wrong URI: "+uri);
         }
-
+        Log.i("DummyContentProvider","uriType: "+uriType);
         Cursor cursor = queryBuilder.query(mDb.getReadableDatabase(),
                 projection, selection, selectionArgs, null, null, sortOrder);
         //Places a watch on cursor, so that if cursor data changes, the change is noticed
@@ -80,7 +91,18 @@ public class DummyContentProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        return null;
+        switch (sURIMatcher.match(uri)) {
+            case FIRST_STUFF:
+            case SECOND_STUFF:
+                return CONTENT_DIR_TYPE;
+
+            case FIRST_STUFF_ID:
+            case SECOND_STUFF_ID:
+                return CONTENT_ITEM_TYPE;
+
+            default:
+                throw new IllegalArgumentException("Wrong URI: "+uri);
+        }
     }
 
     @Override
@@ -90,11 +112,14 @@ public class DummyContentProvider extends ContentProvider {
         long rowId=-1;
 
         switch (uriType){
-            case STUFF:
-                rowId=mDb.getWritableDatabase().insert(DummyDatabase.TABLE,null,values);
+            case FIRST_STUFF:
+                rowId=mDb.getWritableDatabase().insert(FirstDummyTable.TABLE,null,values);
+                break;
+            case SECOND_STUFF:
+                rowId=mDb.getWritableDatabase().insert(SecondDummyTable.TABLE,null,values);
                 break;
             default:
-                throw new IllegalArgumentException("wrong URI");
+                throw new IllegalArgumentException("wrong URI: "+uri);
         }
 
         if (rowId<0)
@@ -114,17 +139,22 @@ public class DummyContentProvider extends ContentProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
 
         int rowsAffected=0;
-
+        String id=uri.getLastPathSegment();;
         switch (sURIMatcher.match(uri)){
-            case STUFF:
-                rowsAffected=mDb.getWritableDatabase().delete(mDb.TABLE,selection,selectionArgs);
+            case FIRST_STUFF:
+                rowsAffected=mDb.getWritableDatabase().delete(FirstDummyTable.TABLE,selection,selectionArgs);
                 break;
-            case STUFF_ID:
-                String id=uri.getLastPathSegment();
-                rowsAffected=mDb.getWritableDatabase().delete(mDb.TABLE, mDb.ID+" LIKE ? ",new String[]{id});
+            case SECOND_STUFF:
+                rowsAffected=mDb.getWritableDatabase().delete(SecondDummyTable.TABLE,selection,selectionArgs);
+                break;
+            case FIRST_STUFF_ID:
+                rowsAffected=mDb.getWritableDatabase().delete(FirstDummyTable.TABLE, FirstDummyTable.ID+" LIKE ? ",new String[]{id});
+                break;
+            case SECOND_STUFF_ID:
+                rowsAffected=mDb.getWritableDatabase().delete(SecondDummyTable.TABLE, SecondDummyTable.ID+" LIKE ? ",new String[]{id});
                 break;
             default:
-                throw new IllegalArgumentException("wrong URI");
+                throw new IllegalArgumentException("wrong URI: "+uri);
         }
 
         getContext().getContentResolver().notifyChange(uri, null);
@@ -133,20 +163,25 @@ public class DummyContentProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int update (Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 
         int rowsAffected=0;
-
+        String id=uri.getLastPathSegment();
         switch (sURIMatcher.match(uri)){
-            case STUFF:
-                rowsAffected=mDb.getWritableDatabase().update(mDb.TABLE,values,selection,selectionArgs);
+            case FIRST_STUFF:
+                rowsAffected=mDb.getWritableDatabase().update(FirstDummyTable.TABLE,values,selection,selectionArgs);
                 break;
-            case STUFF_ID:
-                String id=uri.getLastPathSegment();
-                rowsAffected=mDb.getWritableDatabase().update(mDb.TABLE,values, mDb.ID+" LIKE ? ",new String[]{id});
+            case SECOND_STUFF:
+                rowsAffected=mDb.getWritableDatabase().update(SecondDummyTable.TABLE,values,selection,selectionArgs);
+                break;
+            case FIRST_STUFF_ID:
+                rowsAffected=mDb.getWritableDatabase().update(FirstDummyTable.TABLE,values, FirstDummyTable.ID+" LIKE ? ",new String[]{id});
+                break;
+            case SECOND_STUFF_ID:
+                rowsAffected=mDb.getWritableDatabase().update(SecondDummyTable.TABLE,values, SecondDummyTable.ID+" LIKE ? ",new String[]{id});
                 break;
             default:
-                throw new IllegalArgumentException("wrong URI");
+                throw new IllegalArgumentException("wrong URI: "+uri);
         }
 
         getContext().getContentResolver().notifyChange(uri, null);
