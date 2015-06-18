@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import dummy.justs.com.dummyapp.tables.FirstDummyTable;
 import dummy.justs.com.dummyapp.tables.SecondDummyTable;
+import dummy.justs.com.dummyapp.tables.ViewTable;
 
 /**
  * Created by eptron on 6/17/2015.
@@ -13,7 +14,7 @@ import dummy.justs.com.dummyapp.tables.SecondDummyTable;
 public class DummyDatabase extends SQLiteOpenHelper {
 
     private static final String DB_NAME="DummyDatabase";
-    private static final int DB_VERSION=1;
+    private static final int DB_VERSION=11;
 
 
     public DummyDatabase(Context context) {
@@ -30,6 +31,7 @@ public class DummyDatabase extends SQLiteOpenHelper {
         //TODO can I do this in a loop?
         FirstDummyTable.onCreate(db);
         SecondDummyTable.onCreate(db);
+        ViewTable.onCreate(db);
     }
 
     @Override
@@ -38,5 +40,6 @@ public class DummyDatabase extends SQLiteOpenHelper {
         //TODO can upgrades be done better than simply destroying the whole table?
         FirstDummyTable.onUpgrade(db);
         SecondDummyTable.onUpgrade(db);
+        ViewTable.onUpgrade(db);
     }
 }

@@ -14,18 +14,17 @@ public class FirstDummyTable {
 
     public static final String ID="_id";
     public static final String NAME="name";
-    public static final String COUNT="count";
 
     public static final String BASE_PATH = "first_stuff";
     public static final Uri CONTENT_URI = Uri.parse("content://" + DummyContentProvider.AUTHORITY
-            + "/" + BASE_PATH);
+            + "/" + TABLE);
 
-    public static final String[] PROJECTION={ID, NAME, COUNT};
+    public static final String[] PROJECTION={ID, NAME};
 
     //is all caps really neccessary? or is it just for readability?
     private static final String CREATE_TABLE="CREATE TABLE "+TABLE+" ("+
             ID+" integer primary key autoincrement, "+
-            NAME+" text not null, "+COUNT+" integer);";
+            NAME+" text not null);";
 
     public static void onCreate(SQLiteDatabase db){
         db.execSQL(CREATE_TABLE);

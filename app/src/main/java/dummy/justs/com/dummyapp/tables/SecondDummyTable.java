@@ -13,18 +13,17 @@ public class SecondDummyTable {
     public static final String TABLE="dummyTableTwo";
 
     public static final String ID="_id";
-    public static final String NAME="name";
     public static final String COUNT="count";
 
     public static final String BASE_PATH = "second_stuff";
     public static final Uri CONTENT_URI = Uri.parse("content://" + DummyContentProvider.AUTHORITY
-            + "/" + BASE_PATH);
+            + "/" + TABLE);
 
-    public static final String[] PROJECTION={ID, NAME, COUNT};
+    public static final String[] PROJECTION={ID, COUNT};
 
     private static final String CREATE_TABLE="CREATE TABLE "+TABLE+" ("+
             ID+" integer primary key autoincrement, "+
-            NAME+" text not null, "+COUNT+" integer);";
+            COUNT+" integer);";
 
 
     //Could create a parent abstract class for all tables

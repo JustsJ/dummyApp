@@ -4,11 +4,13 @@ package dummy.justs.com.dummyapp;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +23,8 @@ import dummy.justs.com.dummyapp.tables.FirstDummyTable;
 import dummy.justs.com.dummyapp.tables.SecondDummyTable;
 
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MainActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Cursor>,View.OnClickListener{
 
     private static final int URL_LOADER_FIRST=1;
     private static final int URL_LOADER_SECOND=2;
@@ -40,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mFirstAdapter=new FirstDummyCursorAdapter(this);
         mSecondAdapter=new SecondDummyCursorAdapter(this);
+        findViewById(R.id.first_button).setOnClickListener(this);
+        findViewById(R.id.second_button).setOnClickListener(this);
+        findViewById(R.id.button_sql_view).setOnClickListener(this);
 
         mFirstListView=(ListView)findViewById(R.id.first_list);
         mFirstListView.setAdapter(mFirstAdapter);
@@ -78,33 +84,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     public void onAddEntry(View view) {
 
-        ContentValues values = new ContentValues();
-
-        switch (view.getId())
-        {
-            case R.id.fist_button:
-                values.put(FirstDummyTable.NAME,
-                        ((EditText) findViewById(R.id.name)).getText().toString());
-
-                values.put(FirstDummyTable.COUNT,
-                        ((EditText) findViewById(R.id.count)).getText().toString());
-
-                getContentResolver().insert(
-                        FirstDummyTable.CONTENT_URI, values);
-                break;
-            case R.id.second_button:
-                values.put(SecondDummyTable.NAME,
-                        ((EditText) findViewById(R.id.name)).getText().toString());
-
-                values.put(SecondDummyTable.COUNT,
-                        ((EditText) findViewById(R.id.count)).getText().toString());
-
-                getContentResolver().insert(
-                        SecondDummyTable.CONTENT_URI, values);
-                break;
-        }
-
-
 
 
     }
@@ -126,8 +105,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             case URL_LOADER_SECOND:
                 return new CursorLoader(
                         this,   // Parent activity context
-                        FirstDummyTable.CONTENT_URI,        // Table to query
-                        FirstDummyTable.PROJECTION,     // Projection to return
+                        SecondDummyTable.CONTENT_URI,        // Table to query
+                        SecondDummyTable.PROJECTION,     // Projection to return
                         null,            // No selection clause
                         null,            // No selection arguments
                         null             // Default sort order
@@ -140,11 +119,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.i("Loader onLoadFinished","loaderId="+loader.getId()+" hasName:"+data.getColumnIndex(FirstDummyTable.NAME));
         switch (loader.getId()){
             case URL_LOADER_FIRST:
+                Log.i("Loader onLoadFinished","first case");
                 mFirstAdapter.changeCursor(data);
                 break;
             case URL_LOADER_SECOND:
+                Log.i("Loader onLoadFinished","second case");
                 mSecondAdapter.changeCursor(data);
         }
     }
@@ -159,6 +141,36 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             case URL_LOADER_SECOND:
                 mSecondAdapter.changeCursor(null);
         }
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        ContentValues values = new ContentValues();
+        Log.i("onAddEntry","id="+v.getId());
+        switch (v.getId())
+        {
+            case R.id.first_button:
+                values.put(FirstDummyTable.NAME,
+                        ((EditText) findViewById(R.id.name)).getText().toString());
+
+                getContentResolver().insert(
+                        FirstDummyTable.CONTENT_URI, values);
+                break;
+            case R.id.second_button:
+
+                values.put(SecondDummyTable.COUNT,
+                        ((EditText) findViewById(R.id.count)).getText().toString());
+
+                getContentResolver().insert(
+                        SecondDummyTable.CONTENT_URI, values);
+                break;
+            case R.id.button_sql_view:
+                Intent i=new Intent(this,ViewActivity.class);
+                startActivity(i);
+        }
+
+
 
     }
 }

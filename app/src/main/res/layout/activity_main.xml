@@ -30,13 +30,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Enter entry"
-            android:onClick="onAddEntry"
-            android:id="@+id/fist_button"/>
+            android:id="@+id/first_button"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Enter entry"
-            android:onClick="onAddEntry"
             android:id="@+id/second_button"/>
     </LinearLayout>
 
@@ -60,6 +58,10 @@
             android:id="@+id/second_list">
         </ListView>
     </LinearLayout>
-
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_sql_view"
+        android:text="open SQL view"/>
 
 </LinearLayout>

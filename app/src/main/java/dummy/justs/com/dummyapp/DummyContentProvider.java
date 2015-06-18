@@ -10,10 +10,13 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.sql.SQLException;
 
 import dummy.justs.com.dummyapp.tables.FirstDummyTable;
 import dummy.justs.com.dummyapp.tables.SecondDummyTable;
+import dummy.justs.com.dummyapp.tables.ViewTable;
 
 /**
  * Created by eptron on 6/17/2015.
@@ -30,6 +33,8 @@ public class DummyContentProvider extends ContentProvider {
     public static final int FIRST_STUFF_ID = 2;
     public static final int SECOND_STUFF = 3;
     public static final int SECOND_STUFF_ID = 4;
+    public static final int VIEW_STUFF = 5;
+    public static final int VIEW_STUFF_ID = 6;
 
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
             + "/com.justs.stuff";
@@ -41,10 +46,13 @@ public class DummyContentProvider extends ContentProvider {
 
     //TODO copied from tutorial, how does this syntax even work? Refresh your Java
     static {
-        sURIMatcher.addURI(AUTHORITY, FirstDummyTable.BASE_PATH, FIRST_STUFF);
-        sURIMatcher.addURI(AUTHORITY, FirstDummyTable.BASE_PATH + "/#", FIRST_STUFF_ID);
-        sURIMatcher.addURI(AUTHORITY, SecondDummyTable.BASE_PATH, SECOND_STUFF);
-        sURIMatcher.addURI(AUTHORITY, SecondDummyTable.BASE_PATH + "/#", SECOND_STUFF_ID);
+        sURIMatcher.addURI(AUTHORITY, FirstDummyTable.TABLE, FIRST_STUFF);
+        sURIMatcher.addURI(AUTHORITY, FirstDummyTable.TABLE + "/#", FIRST_STUFF_ID);
+        sURIMatcher.addURI(AUTHORITY, SecondDummyTable.TABLE, SECOND_STUFF);
+        sURIMatcher.addURI(AUTHORITY, SecondDummyTable.TABLE + "/#", SECOND_STUFF_ID);
+        sURIMatcher.addURI(AUTHORITY, ViewTable.TABLE, VIEW_STUFF);
+        sURIMatcher.addURI(AUTHORITY, ViewTable.TABLE + "/#", VIEW_STUFF_ID);
+
     }
 
     @Override
@@ -59,14 +67,17 @@ public class DummyContentProvider extends ContentProvider {
         //used to simplify implementation of query method
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
-
-
-
         //Matches the given uri to pre-defined patterns, and acts according to pattern
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
             case FIRST_STUFF:
+                queryBuilder.setTables(FirstDummyTable.TABLE);
+                break;
             case SECOND_STUFF:
+                queryBuilder.setTables(SecondDummyTable.TABLE);
+                break;
+            case VIEW_STUFF:
+                queryBuilder.setTables(ViewTable.TABLE);
                 break;
             case FIRST_STUFF_ID:
                 queryBuilder.setTables(FirstDummyTable.TABLE);
@@ -78,10 +89,18 @@ public class DummyContentProvider extends ContentProvider {
                 queryBuilder.appendWhere(SecondDummyTable.ID + "="
                         + uri.getLastPathSegment());
                 break;
+            case VIEW_STUFF_ID:
+                queryBuilder.setTables(ViewTable.TABLE);
+                queryBuilder.appendWhere(ViewTable.ID + "="
+                        + uri.getLastPathSegment());
+                break;
+
             default:
                 throw new IllegalArgumentException("Wrong URI: "+uri);
         }
         Log.i("DummyContentProvider","uriType: "+uriType);
+        Gson gson= new Gson();
+        Log.i("DummyContentProvider","uri: "+gson.toJson(uri).toString());
         Cursor cursor = queryBuilder.query(mDb.getReadableDatabase(),
                 projection, selection, selectionArgs, null, null, sortOrder);
         //Places a watch on cursor, so that if cursor data changes, the change is noticed
@@ -94,10 +113,12 @@ public class DummyContentProvider extends ContentProvider {
         switch (sURIMatcher.match(uri)) {
             case FIRST_STUFF:
             case SECOND_STUFF:
+            case VIEW_STUFF:
                 return CONTENT_DIR_TYPE;
 
             case FIRST_STUFF_ID:
             case SECOND_STUFF_ID:
+            case VIEW_STUFF_ID:
                 return CONTENT_ITEM_TYPE;
 
             default:
@@ -117,6 +138,9 @@ public class DummyContentProvider extends ContentProvider {
                 break;
             case SECOND_STUFF:
                 rowId=mDb.getWritableDatabase().insert(SecondDummyTable.TABLE,null,values);
+                break;
+            case VIEW_STUFF:
+                rowId=mDb.getWritableDatabase().insert(ViewTable.TABLE,null,values);
                 break;
             default:
                 throw new IllegalArgumentException("wrong URI: "+uri);
@@ -147,11 +171,17 @@ public class DummyContentProvider extends ContentProvider {
             case SECOND_STUFF:
                 rowsAffected=mDb.getWritableDatabase().delete(SecondDummyTable.TABLE,selection,selectionArgs);
                 break;
+            case VIEW_STUFF:
+                rowsAffected=mDb.getWritableDatabase().delete(ViewTable.TABLE,selection,selectionArgs);
+                break;
             case FIRST_STUFF_ID:
                 rowsAffected=mDb.getWritableDatabase().delete(FirstDummyTable.TABLE, FirstDummyTable.ID+" LIKE ? ",new String[]{id});
                 break;
             case SECOND_STUFF_ID:
                 rowsAffected=mDb.getWritableDatabase().delete(SecondDummyTable.TABLE, SecondDummyTable.ID+" LIKE ? ",new String[]{id});
+                break;
+            case VIEW_STUFF_ID:
+                rowsAffected=mDb.getWritableDatabase().delete(ViewTable.TABLE, ViewTable.ID+" LIKE ? ",new String[]{id});
                 break;
             default:
                 throw new IllegalArgumentException("wrong URI: "+uri);
@@ -174,11 +204,17 @@ public class DummyContentProvider extends ContentProvider {
             case SECOND_STUFF:
                 rowsAffected=mDb.getWritableDatabase().update(SecondDummyTable.TABLE,values,selection,selectionArgs);
                 break;
+            case VIEW_STUFF:
+                rowsAffected=mDb.getWritableDatabase().update(ViewTable.TABLE,values,selection,selectionArgs);
+                break;
             case FIRST_STUFF_ID:
                 rowsAffected=mDb.getWritableDatabase().update(FirstDummyTable.TABLE,values, FirstDummyTable.ID+" LIKE ? ",new String[]{id});
                 break;
             case SECOND_STUFF_ID:
                 rowsAffected=mDb.getWritableDatabase().update(SecondDummyTable.TABLE,values, SecondDummyTable.ID+" LIKE ? ",new String[]{id});
+                break;
+            case VIEW_STUFF_ID:
+                rowsAffected=mDb.getWritableDatabase().update(ViewTable.TABLE,values, ViewTable.ID+" LIKE ? ",new String[]{id});
                 break;
             default:
                 throw new IllegalArgumentException("wrong URI: "+uri);

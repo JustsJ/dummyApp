@@ -18,7 +18,6 @@ import dummy.justs.com.dummyapp.tables.FirstDummyTable;
 public class FirstDummyCursorAdapter extends CursorAdapter {
 
 
-
     public FirstDummyCursorAdapter(Context context) {
         super(context, null, 0);
     }
@@ -33,7 +32,7 @@ public class FirstDummyCursorAdapter extends CursorAdapter {
         TextView name=(TextView) view.findViewById(R.id.item_name);
         TextView count=(TextView) view.findViewById(R.id.item_count);
 
-        name.setText(cursor.getString(cursor.getColumnIndex(FirstDummyTable.NAME)));
-        count.setText(cursor.getString(cursor.getColumnIndex(FirstDummyTable.COUNT)));
+        name.setText(cursor.getString(cursor.getColumnIndex(FirstDummyTable.ID)));
+        count.setText(cursor.getString(cursor.getColumnIndex(FirstDummyTable.NAME)));
     }
 }

@@ -16,6 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ViewActivity"
+            android:configChanges="keyboardHidden|screenSize" />
         <provider
             android:authorities="com.justs.dummyapp.DummyContentProvider"
             android:name=".DummyContentProvider"/>

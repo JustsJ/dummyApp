@@ -2,6 +2,7 @@ package dummy.justs.com.dummyapp.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import dummy.justs.com.dummyapp.DummyDatabase;
 import dummy.justs.com.dummyapp.R;
+import dummy.justs.com.dummyapp.tables.FirstDummyTable;
 import dummy.justs.com.dummyapp.tables.SecondDummyTable;
 
 /**
@@ -33,7 +35,11 @@ public class SecondDummyCursorAdapter extends CursorAdapter {
         TextView name=(TextView) view.findViewById(R.id.item_name);
         TextView count=(TextView) view.findViewById(R.id.item_count);
 
-        name.setText(cursor.getString(cursor.getColumnIndex(SecondDummyTable.NAME)));
+
+        Log.i("SecondCursorAdapter","column count: "+cursor.getColumnIndex(SecondDummyTable.COUNT));
+        Log.i("SecondCursorAdapter","column name: "+cursor.getColumnIndex(FirstDummyTable.NAME));
+
+        name.setText(cursor.getString(cursor.getColumnIndex(SecondDummyTable.ID)));
         count.setText(cursor.getString(cursor.getColumnIndex(SecondDummyTable.COUNT)));
     }
 }
