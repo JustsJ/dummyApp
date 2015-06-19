@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ViewActivity"
+            android:name=".fragments.ViewFragment"
             android:configChanges="keyboardHidden|screenSize" />
         <provider
             android:authorities="com.justs.dummyapp.DummyContentProvider"
