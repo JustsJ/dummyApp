@@ -1,15 +1,17 @@
 package dummy.justs.com.dummyapp.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.LoaderManager;
+
+
 import android.content.ContentValues;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +47,6 @@ public class AddDataFragment extends Fragment implements LoaderManager.LoaderCal
         View view = inflater.inflate(R.layout.add_data_fragment, container, false);
         view.findViewById(R.id.first_button).setOnClickListener(this);
         view.findViewById(R.id.second_button).setOnClickListener(this);
-        view.findViewById(R.id.button_sql_view).setOnClickListener(this);
 
         mFirstListView = (ListView) view.findViewById(R.id.first_list);
         mFirstListView.setAdapter(mFirstAdapter);
@@ -66,6 +67,10 @@ public class AddDataFragment extends Fragment implements LoaderManager.LoaderCal
         getLoaderManager().initLoader(URL_LOADER_SECOND, null, this);
 
     }
+
+    public static Fragment newInstance(){
+        return new AddDataFragment();
+    };
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -148,11 +153,6 @@ public class AddDataFragment extends Fragment implements LoaderManager.LoaderCal
                 getActivity().getContentResolver().insert(
                         SecondDummyTable.CONTENT_URI, values);
                 break;
-            case R.id.button_sql_view:
-                Intent i = new Intent(getActivity(), ViewFragment.class);
-                startActivity(i);
         }
-
-
     }
 }

@@ -1,7 +1,7 @@
 package dummy.justs.com.dummyapp;
 
 
-import android.app.FragmentManager;
+
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
@@ -10,18 +10,26 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import dummy.justs.com.dummyapp.adapters.FirstDummyCursorAdapter;
+import dummy.justs.com.dummyapp.adapters.MyViewPagerAdapter;
 import dummy.justs.com.dummyapp.adapters.SecondDummyCursorAdapter;
 import dummy.justs.com.dummyapp.fragments.AddDataFragment;
 import dummy.justs.com.dummyapp.tables.FirstDummyTable;
@@ -30,44 +38,70 @@ import dummy.justs.com.dummyapp.tables.SecondDummyTable;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ViewPager mViewPager;
     private ActionBar mActionBar;
-    private FragmentManager mFragmentManager;
-    private AddDataFragment mDataFragment;
+    private MyViewPagerAdapter mViewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mViewPagerAdapter);
+
         mActionBar = getSupportActionBar();
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        mActionBar.setDisplayShowTitleEnabled(false);
-        ActionBar.Tab mainTab = mActionBar.newTab();
-        ActionBar.Tab allDataTab = mActionBar.newTab();
 
-        mainTab.setText("main Tab").
-                setContentDescription("Main Dummy Tab for data input").
-                setTabListener(new ActionBar.TabListener() {
-                    @Override
-                    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-                        mFragmentManager.beginTransaction().add(R.id.fragment_container,mDataFragment).commit();
-                    }
+        ActionBar.Tab mainTab=mActionBar.newTab();
 
-                    @Override
-                    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+       mainTab.setTabListener(new ActionBar.TabListener() {
 
-                    }
+           @Override
+           public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+               mViewPager.setCurrentItem(tab.getPosition());
+           }
 
-                    @Override
-                    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+           @Override
+           public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
 
-                    }
-                });
+           }
 
-        mDataFragment= new AddDataFragment();
+           @Override
+           public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 
-        mFragmentManager=getFragmentManager();
-        mFragmentManager.beginTransaction().add(R.id.fragment_container,mDataFragment).commit();
+           }
+       });
+
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                getActionBar().setSelectedNavigationItem(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+
+      /*  mActionBar.addTab(
+                mActionBar.newTab()
+                        .setText("Add data")
+                        );
+
+        mActionBar.addTab(
+                mActionBar.newTab()
+                        .setText("View data")
+                        );
+*/
     }
 
     @Override
