@@ -2,6 +2,8 @@ package dummy.justs.com.dummyapp;
 
 
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
@@ -16,7 +18,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 
-import android.support.v7.app.ActionBar;
+
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,7 +38,7 @@ import dummy.justs.com.dummyapp.tables.FirstDummyTable;
 import dummy.justs.com.dummyapp.tables.SecondDummyTable;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
 
     private ViewPager mViewPager;
     private ActionBar mActionBar;
@@ -51,28 +53,28 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mViewPagerAdapter);
 
-        mActionBar = getSupportActionBar();
+
+        mActionBar = getActionBar();
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        ActionBar.Tab mainTab=mActionBar.newTab();
 
-       mainTab.setTabListener(new ActionBar.TabListener() {
-
+       ActionBar.TabListener tabListener=new ActionBar.TabListener() {
            @Override
-           public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+           public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
                mViewPager.setCurrentItem(tab.getPosition());
            }
 
            @Override
-           public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+           public void onTabUnselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
 
            }
 
            @Override
-           public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+           public void onTabReselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
 
            }
-       });
+       };
+
 
         mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -91,17 +93,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-      /*  mActionBar.addTab(
+        mActionBar.addTab(
                 mActionBar.newTab()
-                        .setText("Add data")
-                        );
+                        .setText("Sunshine").setTabListener(tabListener));
+        mActionBar.addTab(
+                mActionBar.newTab()
+                        .setText("Add data").setTabListener(tabListener));
 
         mActionBar.addTab(
                 mActionBar.newTab()
-                        .setText("View data")
-                        );
-*/
+                        .setText("View data").setTabListener(tabListener));
+
+        mActionBar.addTab(
+                mActionBar.newTab()
+                        .setText("WOMBATS!").setTabListener(tabListener));
+        mActionBar.addTab(
+                mActionBar.newTab()
+                        .setText("Retrofit").setTabListener(tabListener));
+
     }
 
     @Override
