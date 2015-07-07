@@ -10,8 +10,15 @@
         android:background="#F00"
         android:id="@+id/image_info"></LinearLayout>
     <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="#FFCA28"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/image"/>
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/image"/>
+        android:text="graphics"
+        android:onClick="launchGraphics"/>
 
 </LinearLayout>

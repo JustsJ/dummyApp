@@ -27,5 +27,6 @@ dependencies {
     compile('com.loopj.android:android-async-http:1.4.6') {
         exclude group: 'com.google.android', module: 'support-v4'
     }
+    compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'de.greenrobot:eventbus:2.4.0'
 }

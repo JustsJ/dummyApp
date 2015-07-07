@@ -3,39 +3,20 @@ package dummy.justs.com.dummyapp;
 
 
 import android.app.ActionBar;
-import android.app.Activity;
-import android.app.LoaderManager;
-import android.content.ContentValues;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.widget.EditText;
-import android.widget.ListView;
 
-import dummy.justs.com.dummyapp.adapters.FirstDummyCursorAdapter;
 import dummy.justs.com.dummyapp.adapters.MyViewPagerAdapter;
-import dummy.justs.com.dummyapp.adapters.SecondDummyCursorAdapter;
-import dummy.justs.com.dummyapp.fragments.AddDataFragment;
-import dummy.justs.com.dummyapp.tables.FirstDummyTable;
-import dummy.justs.com.dummyapp.tables.SecondDummyTable;
+import dummy.justs.com.dummyapp.graphics.OGLActivity;
 
 
 public class MainActivity extends FragmentActivity {
@@ -53,6 +34,16 @@ public class MainActivity extends FragmentActivity {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mViewPagerAdapter);
 
+        mViewPager.setPageTransformer(true,new ViewPager.PageTransformer() {
+            @Override
+            public void transformPage(View page, float position) {
+              //  page.setAlpha(1-Math.abs(position));
+                int color=255-(int)((Math.abs(position)-1f)*255);
+                page.setBackgroundColor(Color.rgb(color,color,color));
+
+            }
+        }
+        );
 
         mActionBar = getActionBar();
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -139,6 +130,11 @@ public class MainActivity extends FragmentActivity {
 
         return super.onOptionsItemSelected(item);
 
+    }
+
+    public void launchGraphics(View view){
+        Intent i=new Intent(this,OGLActivity.class);
+        startActivity(i);
     }
 
 }

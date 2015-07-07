@@ -18,6 +18,7 @@ import de.greenrobot.event.EventBus;
 import dummy.justs.com.dummyapp.BenchmarkHandler;
 import dummy.justs.com.dummyapp.R;
 import dummy.justs.com.dummyapp.library.model.MainEvent;
+import dummy.justs.com.dummyapp.library.model.NewsEvent;
 import dummy.justs.com.dummyapp.retrofit.API.TestAPI;
 import dummy.justs.com.dummyapp.retrofit.model.TestModel;
 import retrofit.Callback;
@@ -52,8 +53,9 @@ public class RetrofitFragment extends Fragment{
         super.onStart();
     }
 
-    public void onEventMainThread(MainEvent event){
+    public void onEventMainThread(NewsEvent event){
         Log.i("RetrofitFragment","event received");
+        event.parseArray();
         handler1.handleCall(BenchmarkHandler.CALL_TYPE_NORM);
     };
 

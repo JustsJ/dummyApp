@@ -42,7 +42,8 @@ public class BenchmarkHandler {
     public static final String CALL_TYPE_NORM="norm";
     public static final String CALL_TYPE_RETRO="retro";
     public static final String CALL_TYPE_RETRO_CB="retrocb";
-    private double mCallCount=100.0;
+    public static final double MAX_CALLS=1000.0;
+    private double mCallCount=MAX_CALLS;
     private TextView mName;
     private TextView mTotal;
     private TextView mAverage;
@@ -53,9 +54,14 @@ public class BenchmarkHandler {
     private double mTimeStart;
     private double mTimeEnd;
 
+    TestAPI methods;
 
     public BenchmarkHandler(Context context,View view, String callType) {
 
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint(API_URL)
+                .build();
+        methods = restAdapter.create(TestAPI.class);
 
         mName= (TextView) view.findViewById(R.id.title);
         mTotal= (TextView) view.findViewById(R.id.total);
@@ -73,7 +79,7 @@ public class BenchmarkHandler {
                     @Override
                     public void onClick(View v) {
                         mList.clear();
-                        if (mCallCount!=100) return;
+                        if (mCallCount!=MAX_CALLS) return;
                         makeCall(CALL_TYPE_NORM);
                     }
                 });
@@ -84,18 +90,19 @@ public class BenchmarkHandler {
                     @Override
                     public void onClick(View v) {
                         mList.clear();
-                        if (mCallCount != 100) return;
+                        if (mCallCount != MAX_CALLS) return;
                         makeCall(CALL_TYPE_RETRO);
                     }
                 });
                 break;
             case CALL_TYPE_RETRO_CB:
                 mName.setText("Retrofit callback Call");
+
                 mButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mList.clear();
-                        if (mCallCount!=100) return;
+                        if (mCallCount!=MAX_CALLS) return;
                         makeCall(CALL_TYPE_RETRO_CB);
                     }
                 });
@@ -114,8 +121,8 @@ public class BenchmarkHandler {
                 total+=i;
             }
             mTotal.setText("Sum: "+Double.toString(total));
-            mAverage.setText("Avg: "+Double.toString(total/100.00));
-            mCallCount=100.0;
+            mAverage.setText("Avg: "+Double.toString(total/MAX_CALLS));
+            mCallCount=MAX_CALLS;
             return;
         }
         mTimeStart=System.currentTimeMillis();
@@ -126,17 +133,17 @@ public class BenchmarkHandler {
                 DummyController.getController().getNews();
                 break;
             case CALL_TYPE_RETRO:
-                BackgroundTask task = new BackgroundTask();
-                task.execute();
+                new BackgroundTask().execute();
                 break;
             case CALL_TYPE_RETRO_CB:
                 callRetroCallback();
         }
+        if(mCallCount%100==0)
+        Log.i("RestCalls","Type="+callType+" Call nr="+mCallCount);
 
     }
 
     public void handleCall(String callType){
-        mName.setBackgroundColor(Color.RED);
         mTimeEnd=System.currentTimeMillis();
         mList.add((mTimeEnd - mTimeStart) / 1000);
         mAdapter.notifyDataSetChanged();
@@ -145,44 +152,34 @@ public class BenchmarkHandler {
 
 
     private void callRetroCallback(){
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(API_URL)
-                .build();
-        TestAPI methods = restAdapter.create(TestAPI.class);
-
         mTimeStart=System.currentTimeMillis();
-        methods.getNews("93bf6f85bd82791a", 23, 0, 100, new Callback<ArrayList<NewsModel>>() {
-
-            @Override
-            public void success(ArrayList<NewsModel> event, Response response) {
-                handleCall(CALL_TYPE_RETRO_CB);
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-
-            }
-        });
+        methods.getNews("93bf6f85bd82791a", 23, 0, 100, mCallback);
     }
 
+    private Callback<ArrayList<NewsModel>> mCallback = new Callback<ArrayList<NewsModel>>() {
 
+        @Override
+        public void success(ArrayList<NewsModel> event, Response response) {
+            handleCall(CALL_TYPE_RETRO_CB);
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+
+        }
+    };
 
     private class BackgroundTask extends AsyncTask<Void, Void,
             ArrayList<NewsModel>> {
-        RestAdapter restAdapter;
 
         @Override
         protected void onPreExecute() {
             mTimeStart=System.currentTimeMillis();
-            restAdapter = new RestAdapter.Builder()
-                    .setEndpoint(API_URL)
-                    .build();
         }
 
         @Override
         protected ArrayList<NewsModel> doInBackground(Void... params) {
-            TestAPI testAPI = restAdapter.create(TestAPI.class);
-           ArrayList<NewsModel> event = testAPI.getNews("93bf6f85bd82791a",23,0,100);
+           ArrayList<NewsModel> event = methods.getNews("93bf6f85bd82791a",23,0,100);
 
             return event;
         }

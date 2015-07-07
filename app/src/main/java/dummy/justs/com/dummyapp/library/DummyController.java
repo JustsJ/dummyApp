@@ -2,6 +2,7 @@ package dummy.justs.com.dummyapp.library;
 
 import dummy.justs.com.dummyapp.library.model.FailedRequest;
 import dummy.justs.com.dummyapp.library.model.MainEvent;
+import dummy.justs.com.dummyapp.library.model.NewsEvent;
 
 /**
  * Created by eptron on 7/2/2015.
@@ -24,7 +25,7 @@ public class DummyController extends RestController {
     }
 
     public void getNews(){
-        doRestCall(API_URL,ParamsBuilder.buildListParams(0,100),RestHandler.TYPE_GET,new MainEvent());
+        doRestCall(API_URL,ParamsBuilder.buildListParams(0,100),RestHandler.TYPE_GET,new NewsEvent());
 
     }
 }
