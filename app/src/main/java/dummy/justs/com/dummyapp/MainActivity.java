@@ -39,7 +39,13 @@ public class MainActivity extends FragmentActivity {
             public void transformPage(View page, float position) {
               //  page.setAlpha(1-Math.abs(position));
                 int color=255-(int)((Math.abs(position)-1f)*255);
-                page.setBackgroundColor(Color.rgb(color,color,color));
+                if (position<0){
+                    page.setBackgroundColor(Color.rgb(255,color,color));
+                }
+                else if (position>0){
+                    page.setBackgroundColor(Color.rgb(color,255,255));
+                }
+
 
             }
         }

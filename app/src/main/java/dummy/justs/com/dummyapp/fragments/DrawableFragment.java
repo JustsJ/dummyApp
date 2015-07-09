@@ -82,6 +82,13 @@ public class DrawableFragment extends Fragment {
         return view;
     }
 
+    public void doMagic(){
+        Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+
+    }
+
+
     public void getImageInfo(int id) {
         /**
          * option inJustDecodeBounds lets you get the dimensions of the image without
