@@ -2,5 +2,5 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@drawable/sample_image"
         android:id="@+id/image"/>
-    <item android:drawable="@drawable/circle_black"/>
+    <item android:drawable="@drawable/mask"/>
 </layer-list>

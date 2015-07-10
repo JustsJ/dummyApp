@@ -11,6 +11,7 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -82,12 +83,6 @@ public class DrawableFragment extends Fragment {
         return view;
     }
 
-    public void doMagic(){
-        Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-
-    }
-
 
     public void getImageInfo(int id) {
         /**
@@ -112,9 +107,10 @@ public class DrawableFragment extends Fragment {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.outHeight = bitmap.getHeight();
 
-        Bitmap mask = BitmapFactory.decodeResource(getResources(), R.drawable.circle_black, options);
+        Bitmap mask = BitmapFactory.decodeResource(getResources(), R.drawable.mask, options);
         Paint paint = new Paint();
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
+
         canvas.drawBitmap(Bitmap.createScaledBitmap(mask, bitmap.getHeight(), bitmap.getHeight(), false), 0, 0, paint);
         // We do not need the mask bitmap anymore.
         mask.recycle();
