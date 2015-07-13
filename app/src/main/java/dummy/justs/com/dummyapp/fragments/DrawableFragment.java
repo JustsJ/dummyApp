@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
@@ -49,6 +50,19 @@ public class DrawableFragment extends Fragment {
     private TextureView mTextureView;
 
 
+    float[] grayscale=new float[]{
+            0.5f,0.5f,0.5f,0f,0f,
+            0.5f,0.5f,0.5f,0f,0f,
+            0.5f,0.5f,0.5f,0f,0f,
+            0f,0f,0f,1f,0f
+    };
+    float[] regular=new float[]{
+            1f,0f,0f,0f,0f,
+            0f,1f,0f,0f,0f,
+            0f,0f,1f,0f,0f,
+            0f,0f,0f,1f,0f
+    };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,6 +71,8 @@ public class DrawableFragment extends Fragment {
         mInfoView = (LinearLayout) view.findViewById(R.id.image_info);
 
         mImage = (ImageView) view.findViewById(R.id.image);
+        ColorMatrixColorFilter filter=new ColorMatrixColorFilter(grayscale);
+
 
         Drawable backgrounds[] = new Drawable[2];
         Resources res = getResources();
@@ -65,6 +81,7 @@ public class DrawableFragment extends Fragment {
 
         mTransition = new TransitionDrawable(backgrounds);
         mImage.setImageDrawable(mTransition);
+        mImage.getDrawable().setColorFilter(filter);
 
         mImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +127,7 @@ public class DrawableFragment extends Fragment {
         Bitmap mask = BitmapFactory.decodeResource(getResources(), R.drawable.mask, options);
         Paint paint = new Paint();
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
+
 
         canvas.drawBitmap(Bitmap.createScaledBitmap(mask, bitmap.getHeight(), bitmap.getHeight(), false), 0, 0, paint);
         // We do not need the mask bitmap anymore.
