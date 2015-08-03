@@ -107,6 +107,9 @@ public class MainActivity extends FragmentActivity {
         mActionBar.addTab(
                 mActionBar.newTab()
                         .setText("Retrofit").setTabListener(tabListener));
+        mActionBar.addTab(
+                mActionBar.newTab()
+                        .setText("COLORS!").setTabListener(tabListener));
 
     }
 

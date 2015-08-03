@@ -2,6 +2,7 @@ package dummy.justs.com.dummyapp.adapters;
 
 import android.support.v4.app.FragmentStatePagerAdapter;
 import dummy.justs.com.dummyapp.fragments.AddDataFragment;
+import dummy.justs.com.dummyapp.fragments.ColorFragment;
 import dummy.justs.com.dummyapp.fragments.DrawableFragment;
 import dummy.justs.com.dummyapp.fragments.ForecastFragment;
 import dummy.justs.com.dummyapp.fragments.RetrofitFragment;
@@ -11,7 +12,7 @@ import dummy.justs.com.dummyapp.fragments.ViewFragment;
  * Created by eptron on 6/27/2015.
  */
 public class MyViewPagerAdapter extends FragmentStatePagerAdapter {
-    private static final int ITEM_COUNT=5;
+    private static final int ITEM_COUNT=6;
     public MyViewPagerAdapter(android.support.v4.app.FragmentManager fm) {
         super(fm);
     }
@@ -30,6 +31,8 @@ public class MyViewPagerAdapter extends FragmentStatePagerAdapter {
                 return new DrawableFragment();
             case 4:
                 return new RetrofitFragment();
+            case 5:
+                return new ColorFragment();
         }
         return null;
     }
