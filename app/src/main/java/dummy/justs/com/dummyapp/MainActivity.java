@@ -1,7 +1,6 @@
 package dummy.justs.com.dummyapp;
 
 
-
 import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,6 +13,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.facebook.FacebookSdk;
 
 import dummy.justs.com.dummyapp.adapters.MyViewPagerAdapter;
 import dummy.justs.com.dummyapp.graphics.OGLActivity;
@@ -28,49 +29,51 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
         setContentView(R.layout.activity_main);
 
         mViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mViewPagerAdapter);
 
-        mViewPager.setPageTransformer(true,new ViewPager.PageTransformer() {
-            @Override
-            public void transformPage(View page, float position) {
-              //  page.setAlpha(1-Math.abs(position));
-                int color=255-(int)((Math.abs(position)-1f)*255);
-                if (position<0){
-                    page.setBackgroundColor(Color.rgb(255,color,color));
-                }
-                else if (position>0){
-                    page.setBackgroundColor(Color.rgb(color,255,255));
-                }
+        mViewPager.setPageTransformer(true, new ViewPager.PageTransformer() {
+                    @Override
+                    public void transformPage(View page, float position) {
+                        //  page.setAlpha(1-Math.abs(position));
+                        int color = 255 - (int) ((Math.abs(position) - 1f) * 255);
+                        if (position < 0) {
+                            page.setBackgroundColor(Color.rgb(255, color, color));
+                        } else if (position > 0) {
+                            page.setBackgroundColor(Color.rgb(color, 255, 255));
+                        }
 
 
-            }
-        }
+                    }
+                }
         );
 
         mActionBar = getActionBar();
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
 
-       ActionBar.TabListener tabListener=new ActionBar.TabListener() {
-           @Override
-           public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
-               mViewPager.setCurrentItem(tab.getPosition());
-           }
+        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+            @Override
+            public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
 
-           @Override
-           public void onTabUnselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
+            @Override
+            public void onTabUnselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
 
-           }
+            }
 
-           @Override
-           public void onTabReselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
+            @Override
+            public void onTabReselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
 
-           }
-       };
+            }
+        };
 
 
         mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -110,6 +113,9 @@ public class MainActivity extends FragmentActivity {
         mActionBar.addTab(
                 mActionBar.newTab()
                         .setText("COLORS!").setTabListener(tabListener));
+        mActionBar.addTab(
+                mActionBar.newTab()
+                        .setText("sensors").setTabListener(tabListener));
 
     }
 
@@ -141,8 +147,8 @@ public class MainActivity extends FragmentActivity {
 
     }
 
-    public void launchGraphics(View view){
-        Intent i=new Intent(this,OGLActivity.class);
+    public void launchGraphics(View view) {
+        Intent i = new Intent(this, OGLActivity.class);
         startActivity(i);
     }
 

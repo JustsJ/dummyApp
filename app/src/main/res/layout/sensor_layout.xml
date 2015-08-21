@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true">
+        <View
+            android:layout_width="280dp"
+            android:layout_height="50dp"
+            android:visibility="invisible"
+            android:layout_alignParentTop="true"
+            android:id="@+id/indicator_top"
+            android:background="@android:color/holo_red_light"/>
+        <View
+            android:layout_width="280dp"
+            android:layout_height="50dp"
+            android:visibility="invisible"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/indicator_bottom"
+            android:background="@android:color/holo_red_light"/>
+        <View
+            android:layout_width="50dp"
+            android:layout_height="280dp"
+            android:visibility="invisible"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/indicator_left"
+            android:background="@android:color/holo_red_light"/>
+        <View
+            android:layout_width="280dp"
+            android:layout_height="50dp"
+            android:visibility="invisible"
+            android:layout_alignParentRight="true"
+            android:id="@+id/indicator_right"
+            android:background="@android:color/holo_red_light"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerInParent="true">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/coordx"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/coordy"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>
