@@ -13,41 +13,47 @@
             android:visibility="invisible"
             android:layout_alignParentTop="true"
             android:id="@+id/indicator_top"
-            android:background="@android:color/holo_red_light"/>
+            android:background="@color/red"/>
         <View
             android:layout_width="280dp"
             android:layout_height="50dp"
             android:visibility="invisible"
             android:layout_alignParentBottom="true"
             android:id="@+id/indicator_bottom"
-            android:background="@android:color/holo_red_light"/>
+            android:background="@color/green"/>
         <View
             android:layout_width="50dp"
             android:layout_height="280dp"
             android:visibility="invisible"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:id="@+id/indicator_left"
-            android:background="@android:color/holo_red_light"/>
+            android:background="@color/blue"/>
         <View
-            android:layout_width="280dp"
-            android:layout_height="50dp"
+            android:layout_width="50dp"
+            android:layout_height="280dp"
             android:visibility="invisible"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:id="@+id/indicator_right"
-            android:background="@android:color/holo_red_light"/>
+            android:background="@color/yellow"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_centerInParent="true">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/coordx"/>
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/coordy"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/coordz"/>
         </LinearLayout>
     </RelativeLayout>
 

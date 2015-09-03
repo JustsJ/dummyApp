@@ -1,6 +1,12 @@
 package dummy.justs.com.dummyapp.fragments;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,7 +19,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import dummy.justs.com.dummyapp.R;
 
 /**
@@ -21,10 +34,17 @@ import dummy.justs.com.dummyapp.R;
  */
 public class SensorFragment extends Fragment implements SensorEventListener {
 
-    private static final double PRECISSION=0.25;
+    private static final double PRECISION=0.025;
+    private static final int SAMPLING_PERIOD=50000000;
 
-    private TextView mTextCoordx, mTextCoordy;
-    private View mIndicatorTop,mIndicatorBottom,mIndicatorLeft,mIndicatorRight;
+    @Bind(R.id.coordx) TextView mTextCoordx;
+    @Bind(R.id.coordy) TextView mTextCoordy;
+    @Bind(R.id.coordz) TextView mTextCoordz;
+
+    @Bind(R.id.indicator_top) View mIndicatorTop;
+    @Bind(R.id.indicator_bottom) View mIndicatorBottom;
+    @Bind(R.id.indicator_left)  View mIndicatorLeft;
+    @Bind(R.id.indicator_right)  View mIndicatorRight;
 
     private SensorManager mSensorManager;
     private Sensor mSensor;
@@ -36,65 +56,66 @@ public class SensorFragment extends Fragment implements SensorEventListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.sensor_layout,null);
 
-        mTextCoordx= (TextView) view.findViewById(R.id.coordx);
-        mTextCoordy= (TextView) view.findViewById(R.id.coordy);
-
-        mIndicatorTop= view.findViewById(R.id.indicator_top);
-        mIndicatorBottom= view.findViewById(R.id.indicator_bottom);
-        mIndicatorLeft= view.findViewById(R.id.indicator_left);
-        mIndicatorRight= view.findViewById(R.id.indicator_right);
+        ButterKnife.bind(this,view);
 
         init();
 
         return view;
     }
 
-    private void init(){
-        mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mSensorManager.registerListener(this,mSensor,500000);
-
-        Log.i("Sensor",mSensorManager.getSensorList(Sensor.TYPE_ALL).toString());
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mSensorManager!=null) mSensorManager.registerListener(this, mSensor, SAMPLING_PERIOD);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
+    }
+
+    private void init(){
+
+        mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        List<Sensor> sensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
+        mSensor=findSensor(sensorList, Arrays.asList(
+                new Integer[]{Sensor.TYPE_GAME_ROTATION_VECTOR,Sensor.TYPE_ROTATION_VECTOR}));
+
+        if (mSensor!=null){
+
+            mSensorManager.registerListener(this, mSensor, SAMPLING_PERIOD);
+        }
+        else
+        {
+            Toast.makeText(getActivity(), "No usable sensor found!", Toast.LENGTH_SHORT).show();
+        }
+
+        Log.i("Sensor", mSensorManager.getSensorList(Sensor.TYPE_ALL).toString());
+    }
+
+    private double applyPrecision(double x){
+        return ((int)(x/PRECISION)*PRECISION);
+    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        double[] gravity=new double[3];
-        double[] t_linear_acceleration=new double[3];
+        Log.i("SensorEvent", Arrays.toString(event.values));
+        double[] t_event_values=new double[3];
 
-        final double alpha = 0.8;
+        mTextCoordx.setText(Double.toString(applyPrecision(event.values[0])));
+        mTextCoordy.setText(Double.toString(applyPrecision(event.values[1])));
+        mTextCoordz.setText(Double.toString(applyPrecision(event.values[2])));
+        mIndicatorBottom.setVisibility(View.VISIBLE);
 
-        // Isolate the force of gravity with the low-pass filter.
-        gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-        gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-        gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+        mIndicatorBottom.setBackgroundColor(Color.rgb((int) (255 * Math.abs(event.values[0])), (int) (255 * Math.abs(event.values[1])), (int) (255 * Math.abs(event.values[2]))));
+        //getView().setBackgroundColor(Color.rgb((int) (255 * Math.abs(event.values[0])), (int) (255 * Math.abs(event.values[1])), (int) (255 * Math.abs(event.values[2]))));
+        //colorBackground(Color.rgb((int) (255 * event.values[0]), (int) (255 * event.values[1]), (int) (255 * event.values[2])));
+    }
 
-        // Remove the gravity contribution with the high-pass filter.
-        t_linear_acceleration[0] =(event.values[0] - gravity[0])/PRECISSION;
-        t_linear_acceleration[1] =(event.values[1] - gravity[1])/PRECISSION;
-        t_linear_acceleration[2] =(event.values[2] - gravity[2])/PRECISSION;
-
-        removeIndicators();
-
-        if (linear_acceleration[0]-t_linear_acceleration[0]>0){
-            mIndicatorLeft.setVisibility(View.VISIBLE);
-        }
-        else if (linear_acceleration[0]-t_linear_acceleration[0]<0){
-            mIndicatorRight.setVisibility(View.VISIBLE);
-        }
-
-        if (linear_acceleration[1]-t_linear_acceleration[1]>0){
-            mIndicatorTop.setVisibility(View.VISIBLE);
-        }
-        else if (linear_acceleration[1]-t_linear_acceleration[1]<0){
-            mIndicatorBottom.setVisibility(View.VISIBLE);
-        }
-
-        linear_acceleration=t_linear_acceleration;
-
-        mTextCoordx.setText(Double.toString(linear_acceleration[0]));
-        mTextCoordy.setText(Double.toString(linear_acceleration[1]));
+    private void colorBackground(int rgb) {
+        Canvas canvas=new Canvas();
+        Paint paint=new Paint();
     }
 
     @Override
@@ -108,4 +129,27 @@ public class SensorFragment extends Fragment implements SensorEventListener {
         mIndicatorLeft.setVisibility(View.INVISIBLE);
         mIndicatorRight.setVisibility(View.INVISIBLE);
     }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser) {
+            Activity a = getActivity();
+            if(a != null) a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
+
+    private Sensor findSensor(List<Sensor> sensorList, List<Integer> neededSensors){
+        Sensor foundSensor=null;
+        int sensorType=-1; //needed, because on first check calling .getType() will return error
+        for (Sensor i : sensorList){
+            if (neededSensors.indexOf(i.getType())>sensorType){
+                foundSensor=i;
+                sensorType=foundSensor.getType();
+            }
+        }
+        return foundSensor;
+    }
+
+
 }
